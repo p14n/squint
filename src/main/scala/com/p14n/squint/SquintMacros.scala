@@ -1,7 +1,9 @@
 package com.p14n.squint
 
-import scala.language.experimental.macros
-import scala.reflect.macros.Context
+import scala.reflect.macros.blackbox.Context
+import language.experimental.macros
+
+
 
 object Squint {
 
@@ -16,14 +18,42 @@ object Squint {
   
   def squintMacro[S: c.WeakTypeTag,T: c.WeakTypeTag](c: Context): c.Tree = {
     import c.universe._
-    weakTypeOf[T].declarations.foreach( c => {
-        println(c.name )
-    })
 
+    def gatherFields(tpe: c.universe.Type): Iterable[FieldAndFields] = {
+      //is this a collection?  return size or count
+      tpe.decls.collect{
+        case m if m.isMethod => m.asMethod
+      }.filter{_.isCaseAccessor}.map( c => {
+        new FieldAndFields(c.name.toString,
+          c.returnType.toString,gatherFields(c.returnType))
+      })
+    }
+
+    val targetType = weakTypeOf[T]
+    val targetFields = gatherFields(targetType)
+    val sourceType = weakTypeOf[S]
+    val srcFields =  gatherFields(sourceType)
+
+
+println("***********")
+    println(srcFields)
+
+    val fieldText = targetFields.foldLeft(""){ (txt,faf) =>
+      val matched = PropertyMatcher.findMatch(faf,srcFields)
+      matched match {
+        case Some(x) => txt + faf.name +" = src."+ x
+        //case Some(x) => txt :+ q"src.${x}"
+        case _ => txt
+      }
+    }
+println(fieldText)
     val tree = q"""
- new Squintable[Person, PersonSummary] {
-    def doSquint(src: Person): PersonSummary = new PersonSummary(src.address.postCode)
-  }
+ new Squintable[${sourceType}, ${targetType}] {
+    def doSquint(src: ${sourceType}): ${targetType} = 
+      new ${targetType}(
+        $fieldText
+      )
+ }
 """
     println(tree)
     tree
