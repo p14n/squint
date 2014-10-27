@@ -17,7 +17,7 @@ class PropertyMatcherTest extends FunSuite {
     val src = List(new FieldAndFields("postcode","String",List()))
     val target = new FieldAndFields("postcode","String",List())
     val result = PropertyMatcher.findMatch(target,src)
-    assert(result == Some("postcode"))
+    assert(result == Some(Left("postcode")))
   }
 
   test("Should match child property"){
@@ -25,17 +25,17 @@ class PropertyMatcherTest extends FunSuite {
       new FieldAndFields("name","String",List()))))
     val target = new FieldAndFields("companyName","String",List())
     val result = PropertyMatcher.findMatch(target,src)
-    assert(result == Some("company.name"))
+    assert(result == Some(Left("company.name")))
   }
   test("Should match child of child property"){
     val target = new FieldAndFields("companyCeoAddressPostcode","String",List())
     val result = PropertyMatcher.findMatch(target,testCompany)
-    assert(result == Some("company.ceo.address.postcode"))
+    assert(result == Some(Left("company.ceo.address.postcode")))
   }
   test("Should match child property case class"){
     val target = new FieldAndFields("companyCeo","Person",List())
     val result = PropertyMatcher.findMatch(target,testCompany)
-    assert(result == Some("company.ceo"))
+    assert(result == Some(Left("company.ceo")))
   }
 
 }
