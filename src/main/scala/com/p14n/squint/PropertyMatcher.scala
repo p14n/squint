@@ -10,8 +10,6 @@ object PropertyMatcher {
     targetType:Any,src: Iterable[FieldAndFields]): Option[Either[String,Any]]  = {
 
     src.foreach( f => {
-      println(f.name + ","+ targetName)
-      println(f.fieldType +","+ targetType)
       if(targetName == f.lower){
         if(targetType == f.fieldType){
            return Some(Left(f.name))

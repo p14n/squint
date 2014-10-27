@@ -50,7 +50,9 @@ object Squint {
               Some(q"$tname = $selector")
             }
             case Right(x) => {
-              val ccInner = createCaseClass(targetType, x.asInstanceOf[c.universe.Type])
+              val ccInner = createCaseClass(
+                faf.fieldType.asInstanceOf[c.universe.Type], 
+                x.asInstanceOf[c.universe.Type])
               Some(q"$tname = $ccInner")
             }
           }

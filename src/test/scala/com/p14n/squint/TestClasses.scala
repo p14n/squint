@@ -7,6 +7,6 @@ object TestClasses {
   case class Company(name: String, address:Address, employees: List[Person],ceo :Person)
 
   case class PersonSummary(addressPostCode: String)
-  case class CompanySummry(
-    companyName: String)
+  case class CompanySummary(
+    name: String, ceo: PersonSummary)
 }
