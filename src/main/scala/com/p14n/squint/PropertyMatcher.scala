@@ -16,8 +16,8 @@ object PropertyMatcher {
         } else {
           return Some(Right(f.fieldType))
         }
-      }
-       
+      } else if (targetName == "count" && f.lower == "size")
+           return Some(Left(f.name))       
     })
 
     src.foreach( f => {

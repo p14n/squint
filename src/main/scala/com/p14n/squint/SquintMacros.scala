@@ -20,14 +20,18 @@ object Squint {
     import c.universe._
 
    def gatherFields(tpe: c.universe.Type): Iterable[FieldAndFields] = {
-      //is this a collection?  return size or count
-     tpe.decls.collect{
+     val fafs = tpe.decls.collect{
        case m if m.isMethod => m.asMethod
-     }.filter{_.isCaseAccessor}.map( c => {
+     }.filter{ mm => { mm.isCaseAccessor || mm.name.toString == "size" } }.map( c => {
        new FieldAndFields(c.name.toString,
           c.returnType,gatherFields(c.returnType))
      })
+
+     if(tpe <:< typeOf[Traversable[Any]]){
+       fafs ++ List(new FieldAndFields("size",typeOf[Int],List()))
+     } else fafs
    }
+
    def createCaseClass(targetType:c.universe.Type,sourceType:c.universe.Type): c.Tree = {
      val targetFields = gatherFields(targetType)
      val srcFields =  gatherFields(sourceType)
