@@ -27,6 +27,11 @@ class TestSimpleCases extends FunSuite {
     val p: OptionalNodeSummary1 = squint[OptionalActualNode,OptionalNodeSummary1](n)
     assert(p.actOptActOpt.get.name == "Bob")
   }
+  test("Should find None not null with for comprehension"){
+    val n = act(opt(act(null)))
+    val p: OptionalNodeSummary1 = squint[OptionalActualNode,OptionalNodeSummary1](n)
+    assert(!p.actOptActOpt.isDefined)
+  }
   test("Should find None with for comprehension"){
     val n = act(opt(act(named("Bob"))))
     val p: OptionalNodeSummary1 = squint[OptionalActualNode,OptionalNodeSummary1](n)
