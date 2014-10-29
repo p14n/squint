@@ -9,7 +9,7 @@ object TestClasses {
   case class PersonSummary(addressPostCode: String)
   case class CompanySummary(
     name: String, ceo: PersonSummary, employeesCount: Int,industry: Option[String] = None)
-  /*case class CompanySummary(
-    name: String, ceo: PersonSummary, employeesCount: Int, addressPostCode: Option[String])*/
 
+  case class OptionalActualNode(act: OptionalActualNode, opt: Option[OptionalActualNode], name:String = "*")
+  case class OptionalNodeSummary1(actOptActOpt: Option[OptionalActualNode])
 }
